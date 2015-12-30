@@ -48,30 +48,52 @@ module.exports = function (config) {
   gulp.task('default', function () {
     var view_path = path.join(abs, view, project);
     var root_path = path.join(abs, root);
-    var asset_path = path.join(root_path, 'asset', project, 'img');
+    var partial_path = path.join(root_path, 'partial');
     //第一次useful，搞定文件合并和存储；第二次，加上目录前缀
-    gulp.src('*.html')
+    var steam = gulp.src('*.html')
       .pipe(useref({
         base: root_path
       }))
       .pipe(useref({
         import: function (content, target, options, alternateSearchPath) {
-          return content.replace('/asset/', '/' + rewrite + '/asset/');
+          //替换资源路径和图片路径
+          content = content
+            .replace(/asset/g, rewrite + '/asset')
+            .replace(/vendor/g, rewrite + '/vendor')
+            .replace(/partial/g, rewrite + '/partial');
+          var asset = '';
+          if ('partial' !== project) {
+            asset = 'asset/';
+          }
+          
+          return content.replace(/img\//g, '/' + rewrite + '/' + asset + project + '/img/');     
         }
-      }))
-      .pipe(gulp.dest(view_path))
-      .on('finish', function () {
+      }));
+
+    if ('partial' !== project) {
+      steam.pipe(gulp.dest(view_path));
+    } else {
+      steam.pipe(gulp.dest(partial_path));
+    }
+      
+    steam.on('finish', function () {
         console.log('\n  打包完毕。');
         console.log('\n    页面目录：%s', view_path);
         console.log('\n    资源目录：%s \n', root_path);
       });
 
+    if ('partial' !== project) {
+      var img_path = path.join(root_path, 'asset', project, 'img');
+    } else {
+      var img_path = path.join(partial_path, 'img');
+    }
+    
     //图片要单独搞
     gulp.src('img/*')
-      .pipe(gulp.dest(asset_path))
+      .pipe(gulp.dest(img_path))
       .on('finish', function () {
         console.log('\n  图片收集完毕。');
-        console.log('\n    图片目录：%s', asset_path);
+        console.log('\n    图片目录：%s', img_path);
       });
   });
 
