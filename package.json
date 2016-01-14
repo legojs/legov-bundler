@@ -1,7 +1,7 @@
 {
   "name": "legov-bundler",
-  "version": "1.0.0",
-  "description": "legov的默认打包机，基于webpack & gulp。",
+  "version": "1.1.0",
+  "description": "legov的默认打包器，基于gulp。",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
