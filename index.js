@@ -28,7 +28,7 @@ module.exports = function (config) {
           .pipe(gulp.dest('./dist'));
   });*/
   var cwd = process.cwd().split(path.sep);
-  var soil_path = cwd.slice(2, 3)[0];//得到:wxpay.oa.com-boss
+  var soil_path = cwd.slice(-2)[0];//得到:wxpay.oa.com-boss
   var abs = cwd.slice(0, 3).join(path.sep);
 
   //定位站点信息
@@ -38,7 +38,7 @@ module.exports = function (config) {
   config.site[host] = config.site[host] || {};
 
   if (!config.site[host][rewrite]) {
-    console.log('\n  [%s]错误的站点目录。', soil_path);
+    console.log('\n  [%s]错误的站点目录。必须在material目录下启动。', soil_path);
     return;
   }
 
@@ -55,7 +55,7 @@ module.exports = function (config) {
       var view_path = path.join(abs, view, project);
       var root_path = path.join(abs, root);
       var partial_path = path.join(root_path, 'partial');
-      var vp = vinylPaths();  
+      var vp = vinylPaths();
 
       //第一次useful，搞定文件合并和存储；第二次，加上目录前缀
       var steam = gulp.src(event.path)
